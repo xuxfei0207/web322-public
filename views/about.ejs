@@ -8,39 +8,21 @@
 </head>
 <body>
     <!-- navbar -->
-    <div class="navbar bg-base-100">
-        <div class="flex-1">
-            <!-- modify the path -->
-          <h1><a href="/" class="btn btn-ghost normal-case text-xl">Lego Collection</a></h1>
-        </div>
-      
-        <div class="navbar-center hidden sm:flex"></div>
-          <ul class="menu menu-horizontal px-1">
-            <li>
-                <li><a class="active" href="/about">About</a></li>
-            </li>
-            <li>
-              <details>
-                <!-- dropdown -->
-                <summary>Theme</summary> 
-                <ul class="p-2 bg-base-100 right-0">
-                    <!-- modify the path -->
-                    <li><a href="/lego/sets?theme=Technic">Technic</a></li>
-                    <li><a href="/lego/sets?theme=Classic Town">Classic Town</a></li>
-                    <li><a href="/lego/sets?theme=Supplemental">Supplemental</a></li>
-                </ul>
-              </details>
-            </li>
-          </ul>
-        </div>
-    </div>
+    <%- include('partials/navbar', {page: '/about'}) %>
 
+    <!-- hero section -->
     <div class="container mx-auto">
         <div class="hero bg-base-200 rounded-lg p-6">
             <div class="hero-content text-center ">
                 <div class="max-w-md">
                     <h1 class="text-5xl font-bold">About</h1>
                     <p class="py-6">Everything about me</p>
+
+                    <tr>
+                        <td><%= person.name %></td>
+                        <td><%= person.age %></td>
+                        <td><%= person.sex %></td>
+                      </tr>
                 </div>
             </div>
         </div>

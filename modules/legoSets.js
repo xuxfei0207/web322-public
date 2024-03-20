@@ -20,41 +20,6 @@ function initialize() {
     
 }
 
-
-// const sample1 = {
-//     'a' : 1,
-//     'b' : 2
-// }
-
-// const sample2 = {
-//     ...sample1,
-//     'c' : 3
-// }
-
-// //
-// sample2 = {
-//     'a' : 1,
-//     'b' : 2,
-//     'c' : 3
-// }
-
-// const nums = [1, 2, 3];
-// nums.forEach(num => {
-//     console.log("num: ", num);
-// })
-
-// for (const num of nums) {
-//     console.log("num: ", num);
-// }
-
-// nums.find(num => num === 2);
-
-// const a  =  3;
-// arr = [1, 2];
-
-// arr.push(a) // arr = [1, 2, 3]
-
-
 function getAllSets() {
     return new Promise((resolve, reject) => {
         if (sets.length === 0) {
