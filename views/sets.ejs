@@ -16,6 +16,7 @@
       <div class="hero-content text-center ">
         <div class="max-w-md">
           <h1 class="text-5xl font-bold">Collection</h1>
+          
           <p class="py-6">Browse the entire collection. Click the theme to filter by theme such as:
             <a href="/lego/sets?theme=Technic" class="btn btn-primary btn-xs">Technic</a>
             <a href="/lego/sets?theme=Competition" class="btn btn-primary btn-xs">Competition</a>
@@ -39,7 +40,7 @@
                     </div>
                   </td>
                   <td>
-                    <%= set.name %> | <a href="/lego/sets?theme=<%= set.theme %>" class="btn mt-2 btn-xs"><%= set.theme %></a>
+                    <%= set.name %> | <a href="/lego/sets?theme=<%= set.Theme.name %>" class="btn mt-2 btn-xs"><%= set.Theme.name %></a>
                   </td>
                   <td>
                     <span class="font-bold">Year: </span> <%= set.year %> - <span class="font-bold">Parts:</span> <%= set.num_parts %>

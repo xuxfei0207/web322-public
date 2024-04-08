@@ -5,12 +5,9 @@
   
     <div class="navbar-center hidden sm:flex"></div>
       <ul class="menu menu-horizontal px-1">
-        <li>
-          <a class="<%= (page == "/lego/sets") ? 'active' : '' %>" href="/lego/sets">View Collection</a>
-        </li>
-        <li>
-            <a class="<%= (page == '/about') ? 'active' : '' %>" href="/about">About</a>
-        </li>
+        <li><a class="<%= (page == "/lego/sets") ? 'active' : '' %>" href="/lego/sets">View Collection</a></li>       
+        <li><a class="<%= (page == "/lego/addSet") ? 'active' : '' %>" href="/lego/addSet">Add to Collection</a></li>
+        <li><a class="<%= (page == '/about') ? 'active' : '' %>" href="/about">About</a></li>
       </ul>
     </div>
 </div>

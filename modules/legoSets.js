@@ -1,76 +1,157 @@
-const setData = require("../data/setData");
-const themeData = require("../data/themeData");
+require("dotenv").config();
 
-let sets = [];
+const Sequelize = require("sequelize");
+
+// set up sequelize to point to our postgres database
+let sequelize = new Sequelize(
+  process.env.DB_DATABASE,
+  process.env.DB_USER,
+  process.env.DB_PASSWORD,
+  {
+    host: process.env.DB_HOST,
+    dialect: "postgres",
+    port: 5432,
+    dialectOptions: {
+      ssl: { rejectUnauthorized: false },
+    },
+  }
+);
+
+// define Theme model
+const Theme = sequelize.define(
+  "Theme",
+  {
+    id: {
+      type: Sequelize.INTEGER,
+      primaryKey: true,
+      autoIncrement: true,
+    },
+    name: Sequelize.STRING,
+  },
+  {
+    createdAt: false,
+    updatedAt: false,
+  }
+);
+
+// define Set model
+const Set = sequelize.define(
+  "Set",
+  {
+    set_num: {
+      type: Sequelize.STRING,
+      primaryKey: true,
+    },
+    name: Sequelize.STRING,
+    year: Sequelize.INTEGER,
+    num_parts: Sequelize.INTEGER,
+    theme_id: Sequelize.INTEGER,
+    img_url: Sequelize.STRING,
+  },
+  {
+    createdAt: false,
+    updatedAt: false,
+  }
+);
+
+Set.belongsTo(Theme, { foreignKey: "theme_id" });
 
 function initialize() {
-    return new Promise((resolve, reject) => {
-        setData.forEach(data => {
-            const theme = themeData.find(theme => theme['id'] === data['theme_id']);
-            if (theme) {
-                const setDataWithTheme = {
-                    ...data,
-                    theme: theme.name
-                };
-                sets.push(setDataWithTheme);
-            }
-        }) 
-        resolve();   
-    });
-    
+  return new Promise(async (resolve, reject) => {
+    try {
+      await sequelize.sync();
+      resolve();
+    } catch (err) {
+      reject(err.message);
+    }
+  });
 }
 
 function getAllSets() {
-    return new Promise((resolve, reject) => {
-        if (sets.length === 0) {
-            reject("sets array is empty. Call initialize() first.");
-        } else {
-            resolve([...sets]);
-        }
+  return new Promise(async (resolve, reject) => {
+    let sets = await Set.findAll({include: [Theme]});
+    resolve(sets);
+  });
+}
+
+function getAllThemes() {
+    return new Promise(async (resolve, reject) => {
+        let themes = await Theme.findAll();
+        resolve(themes);
     });
 }
 
 function getSetByNum(setNum) {
-    return new Promise((resolve, reject) => {
-        const foundSet = sets.find(data => data.set_num === setNum);
-        if (foundSet) {
-            resolve(foundSet);
-        } else {
-            reject(`Can't find set with set_num: ${setNum}`);
-        }
+  return new Promise(async (resolve, reject) => {
+    let foundSet = await Set.findAll({
+      include: [Theme],
+      where: { set_num: setNum },
     });
+
+    if (foundSet.length > 0) {
+      resolve(foundSet[0]);
+    } else {
+      reject("Unable to find requested set");
+    }
+  });
 }
 
 function getSetsByTheme(theme) {
-    return new Promise((resolve, reject) => {
-        if (sets.length === 0) {
-            reject("Sets array is empty. Call initialize() first.");
-        } else {
-            // const lowercaseTheme = theme.toLowerCase();
-            const matchingSets = sets.filter(set => set.theme.toLowerCase().includes(theme.toLowerCase()));
+  return new Promise(async (resolve, reject) => {
+    let foundSets = await Set.findAll({
+      include: [Theme],
+      where: {
+        "$Theme.name$": {
+          [Sequelize.Op.iLike]: `%${theme}%`,
+        },
+      },
+    });
 
-            if (matchingSets.length > 0) {
-                resolve([...matchingSets]);
-            } else {
-                reject(`Can't find sets with theme: ${theme}`);
-            }
-        }
-    });   
+    if (foundSets.length > 0) {
+      resolve(foundSets);
+    } else {
+      reject("Unable to find requested sets");
+    }
+  });
 }
 
-// Test if initialize() works - it works!
-// initialize()
-//   .then(() => {
-//     // Do something after initialization is complete, e.g., log the populated `sets` array.
-//     console.log(sets);
-//   })
-//   .catch((error) => {
-//     // Handle any errors that may occur during initialization.
-//     console.error('Initialization failed:', error);
-//   });
+function addSet(setData){
+    return new Promise(async (resolve,reject)=>{
+      try{
+        await Set.create(setData);
+        resolve();
+      }catch(err){
+        reject(err.errors[0].message)
+      }
+    });
+  }
 
-module.exports = { initialize, getAllSets, getSetByNum, getSetsByTheme };
+function editSet(set_num, setData){
+  return new Promise(async (resolve,reject)=>{
+    try {
+      await Set.update(setData,{where: {set_num: set_num}})
+      resolve();
+    }catch(err){
+      reject(err.errors[0].message);
+    }
+  });
+}  
+
+function deleteSet(set_num){
+    return new Promise(async (resolve,reject)=>{
+      try{
+        await Set.destroy({
+          where: { set_num: set_num }
+        });
+        resolve();
+      }catch(err){
+        reject(err.errors[0].message);
+      }
+     
+    });  
+  }
+
+module.exports = { initialize, getAllSets, getAllThemes, getSetByNum, getSetsByTheme, addSet, editSet, deleteSet };
 // set.theme.lowercaseTheme().include(lowercaseTheme)
 // 'service packs'.include('service')
 // [1, 2, 3].include(2)
-
