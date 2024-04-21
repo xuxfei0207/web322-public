@@ -48,7 +48,10 @@
                       
                       <span id="quote"></span>
                       <br /><br />
-                      <a class="btn btn-success btn-sm" href="/lego/editSet/<%= set.set_num %>">EDIT SET: <%= set.name.toUpperCase() %></a>
+                      <% if(session.user){ %> 
+                        <a class="btn btn-success btn-sm" href="/lego/editSet/<%= set.set_num %>">EDIT SET: <%= set.name.toUpperCase() %></a>
+                      <% } %>
+                      
                       <a class="btn btn-primary btn-sm" href="#" onclick="history.back(); return false;">RETURN</a>
                   </p>
               </div>
